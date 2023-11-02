@@ -12,8 +12,35 @@ import SearchIcon from '@mui/icons-material/Search';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import ramen from '../assets/ramen.jpg'
+import { MealType, Cuisine } from '../utilities/Enums';
 
 export default function Menu() {
+        const mealTypes: Array<MealType> = Object.values(MealType)
+        const cuisines: Array<Cuisine> = Object.values(Cuisine)
+        const filterURL = "http://localhost:3000/admin/restaurants/food/"
+
+        const fetchByFilter = async (filter: MealType | Cuisine, endpoint: string) => {
+                const URL = filterURL + endpoint + "/" + filter
+                try {
+                        const response = await fetch(URL, {
+                                method: 'GET',
+                                headers: {
+                                        'Content-Type': 'application/json',
+                                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                                }
+
+                        })
+
+                        const parsedResponse = await response.json()
+                        console.log(parsedResponse);
+
+
+                } catch (error) {
+                        // console.log(error);
+                        alert("something went wrong.")
+                }
+        }
+
         return (
                 <Grid sx={{
                         width: '100%',
@@ -42,40 +69,8 @@ export default function Menu() {
                                                 whiteSpace: 'nowrap',
                                                 padding: '4px'
                                         }}>
-                                                <Box bgcolor={deepOrange[500]} sx={{
-                                                        width: '200px',
-                                                        display: 'inline-block',
-                                                        borderRadius: '25px',
-                                                        height: '75%',
-                                                        textAlign: 'center',
-                                                        margin: '4px',
-                                                        "&:hover": {
-                                                                border: '2px solid'
-                                                        }
-
-                                                }}>
-                                                        <Typography variant='h6' color={'white'}>
-                                                                Meal Type
-                                                        </Typography>
-
-                                                </Box>
-                                                <Box bgcolor={deepOrange[500]} sx={{
-                                                        width: '200px',
-                                                        display: 'inline-block',
-                                                        borderRadius: '25px',
-                                                        height: '75%',
-                                                        textAlign: 'center',
-                                                        margin: '4px',
-                                                        "&:hover": {
-                                                                border: '2px solid'
-                                                        }
-
-                                                }}>
-                                                        <Typography variant='h6' color={'white'}>
-                                                                Cuisine
-                                                        </Typography>
-                                                </Box>
-
+                                                <FilterBar filterTypes={mealTypes} fetchByFilter={fetchByFilter} endpoint='mealType'></FilterBar>
+                                                <FilterBar filterTypes={cuisines} fetchByFilter={fetchByFilter} endpoint='cuisine'></FilterBar>
                                         </Box>
 
                                         <Box sx={{
@@ -329,4 +324,39 @@ export function ItemRate() {
                         </Grid>
                 </>
         );
+}
+
+export function FilterBar(props: {
+        filterTypes: MealType[] | Cuisine[],
+        fetchByFilter(filter: MealType | Cuisine, endpoint: string): void,
+        endpoint: string //url endpoint
+}) {
+        const filterTypes = props.filterTypes
+        const fetchByFilter = props.fetchByFilter
+        return (
+                <>
+                        {
+                                filterTypes.map((filterBy) => (
+                                        <>
+                                                <Box onClick={() => { fetchByFilter(filterBy, props.endpoint) }} bgcolor={deepOrange[500]} sx={{
+                                                        width: '200px',
+                                                        display: 'inline-block',
+                                                        borderRadius: '25px',
+                                                        height: '75%',
+                                                        textAlign: 'center',
+                                                        margin: '4px',
+                                                        "&:hover": {
+                                                                border: '2px solid'
+                                                        }
+                                                }}>
+                                                        <Typography variant='h6' color={'white'}>
+                                                                {filterBy}
+                                                        </Typography>
+                                                </Box>
+                                        </>
+                                ))
+                        }
+
+                </>
+        )
 }

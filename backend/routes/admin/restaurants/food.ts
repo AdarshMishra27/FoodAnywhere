@@ -6,6 +6,9 @@ const router = express.Router()
 
 interface FoodBlueprint {
         name: string,
+        description: string,
+        restaurant: string,
+        restaurant_address: string,
         meal_type: "Breakfast" | "Lunch" | "Dinner",
         cuisine: "American" | "Seafood" | "Indian" | "Chinese" | "Italian" | "Mexican" | "Spanish" | "Israeli " | "Japanese",
         price: number
@@ -44,10 +47,24 @@ router.get('/:restaurantID/food/getAll', authenticateJwt, async (req, res) => {
         try {
                 const hotel = await Restaurants.findById(restaurantID)
                 if (!hotel) {
-                        res.status(500).json({ error: "no restaurant found in which food is to be added" })
+                        res.status(500).json({ error: "food not found" })
                         return;
                 }
                 res.json(hotel.food);
+        } catch (error) {
+                console.log(error);
+                res.status(500).json({ error: "Failed to fetch data" })
+        }
+})
+
+router.get('/food/getAll', authenticateJwt, async (req, res) => {
+        try {
+                const response = await Food.find({})
+                if (!response) {
+                        res.status(500).json({ error: "food not found" })
+                        return;
+                }
+                res.json(response);
         } catch (error) {
                 console.log(error);
                 res.status(500).json({ error: "Failed to fetch data" })

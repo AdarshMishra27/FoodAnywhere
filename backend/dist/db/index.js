@@ -61,6 +61,15 @@ const foodSchema = new mongoose_1.default.Schema({
         type: String,
         required: true
     },
+    description: String,
+    restaurant: {
+        type: String,
+        required: true
+    },
+    restaurant_address: {
+        type: String,
+        required: true
+    },
     meal_type: {
         type: String,
         enum: ["Breakfast", "Lunch", "Dinner"],

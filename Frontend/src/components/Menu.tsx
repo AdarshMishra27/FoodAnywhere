@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Grid, Box, Paper } from '@mui/material'
 import { deepOrange } from '@mui/material/colors';
 import Card from '@mui/material/Card';
@@ -14,10 +14,45 @@ import Typography from '@mui/material/Typography';
 import ramen from '../assets/ramen.jpg'
 import { MealType, Cuisine } from '../utilities/Enums';
 
+interface FoodBlueprint {
+        name: string,
+        description: string,
+        restaurant: string,
+        restaurant_address: string,
+        meal_type: "Breakfast" | "Lunch" | "Dinner",
+        cuisine: "American" | "Seafood" | "Indian" | "Chinese" | "Italian" | "Mexican" | "Spanish" | "Israeli " | "Japanese",
+        price: number
+}
+
 export default function Menu() {
         const mealTypes: Array<MealType> = Object.values(MealType)
         const cuisines: Array<Cuisine> = Object.values(Cuisine)
         const filterURL = "http://localhost:3000/admin/restaurants/food/"
+        const getAllFoodsURL = "http://localhost:3000/admin/restaurants/food/getAll"
+
+        const [foods, setFoods] = useState<FoodBlueprint[]>([]);
+
+        React.useEffect(() => {
+                async function fetchFood(URL: string) {
+                        try {
+                                const response = await fetch(URL, {
+                                        method: 'GET',
+                                        headers: {
+                                                'Content-Type': 'application/json',
+                                                Authorization: `Bearer ${localStorage.getItem("token")}`
+                                        }
+                                })
+                                // console.log(response)
+                                const resp = await response.json()
+                                // console.log(resp);
+                                setFoods(resp)
+                        } catch (error) {
+                                // console.log(error)
+                                alert("something went wrong.")
+                        }
+                }
+                fetchFood(getAllFoodsURL)
+        }, [])
 
         const fetchByFilter = async (filter: MealType | Cuisine, endpoint: string) => {
                 const URL = filterURL + endpoint + "/" + filter
@@ -30,10 +65,8 @@ export default function Menu() {
                                 }
 
                         })
-
                         const parsedResponse = await response.json()
-                        console.log(parsedResponse);
-
+                        setFoods(parsedResponse)
 
                 } catch (error) {
                         // console.log(error);
@@ -87,54 +120,13 @@ export default function Menu() {
                                                 borderRadius: '25px',
                                                 overflowY: 'scroll'
                                         }}>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
-                                                <Grid xs={3} item>
-                                                        <FoodCard></FoodCard>
-                                                </Grid>
+                                                {
+                                                        foods.map((food) => {
+                                                                // console.log(food);
+                                                                return <FoodCard foodName={food.name} description={food.description} price={food.price}
+                                                                        restaurant={food.restaurant} restaurantAddress={food.restaurant_address}></FoodCard>
+                                                        })
+                                                }
                                         </Grid>
                                 </Grid>
                                 <Grid item xs={3}>
@@ -171,27 +163,48 @@ export default function Menu() {
         )
 }
 
-export function FoodCard() {
+export function FoodCard(props: {
+        foodName: string,
+        restaurant: string,
+        restaurantAddress: string,
+        description: string,
+        price: number
+}) {
+        const foodName = props.foodName
+        const description = props.description
+        const price = props.price
+        const restaurant = props.restaurant
+        const restaurantAddress = props.restaurantAddress
         return (
-                <Card sx={{ maxWidth: 250, borderRadius: '25px' }}>
-                        <CardMedia
-                                sx={{ height: 140 }}
-                                image={ramen}
-                                title="ramen"
-                        />
-                        <CardContent>
-                                <Typography gutterBottom variant="h5" component="div">
-                                        Ramen
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                        Ramen is a Japanese noodle dish. It consists of Chinese-style wheat noodles served in a broth; common flavors are soy sauce and miso, with typical toppings including sliced pork, nori, menma, and scallions.
-                                </Typography>
-                        </CardContent>
-                        <CardActions>
-                                <Button sx={{ color: deepOrange[500] }} size="small">Add</Button>
-                                <Button sx={{ color: deepOrange[500] }} size="small">Rs. 500</Button>
-                        </CardActions>
-                </Card>
+                <>
+                        <Grid xs={3} item>
+                                <Card sx={{ maxWidth: 250, borderRadius: '25px' }}>
+                                        <CardMedia
+                                                sx={{ height: 140 }}
+                                                image={ramen}
+                                                title="ramen"
+                                        />
+                                        <CardContent>
+                                                <Typography gutterBottom variant="h5" component="div">
+                                                        {foodName}
+                                                </Typography>
+                                                <Typography gutterBottom variant="body2" component="div">
+                                                        {restaurant}
+                                                </Typography>
+                                                <Typography gutterBottom variant="body2" component="div">
+                                                        {restaurantAddress}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary">
+                                                        {description}
+                                                </Typography>
+                                        </CardContent>
+                                        <CardActions>
+                                                <Button sx={{ color: deepOrange[500] }} size="small">Add</Button>
+                                                <Button sx={{ color: deepOrange[500] }} size="small">{price}</Button>
+                                        </CardActions>
+                                </Card>
+                        </Grid>
+                </>
         );
 }
 

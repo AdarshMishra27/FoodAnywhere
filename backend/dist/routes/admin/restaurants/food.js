@@ -50,10 +50,24 @@ router.get('/:restaurantID/food/getAll', index_1.authenticateJwt, (req, res) => 
     try {
         const hotel = yield db_1.Restaurants.findById(restaurantID);
         if (!hotel) {
-            res.status(500).json({ error: "no restaurant found in which food is to be added" });
+            res.status(500).json({ error: "food not found" });
             return;
         }
         res.json(hotel.food);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Failed to fetch data" });
+    }
+}));
+router.get('/food/getAll', index_1.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const response = yield db_1.Food.find({});
+        if (!response) {
+            res.status(500).json({ error: "food not found" });
+            return;
+        }
+        res.json(response);
     }
     catch (error) {
         console.log(error);

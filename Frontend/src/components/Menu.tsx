@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useReducer, useState } from 'react'
 import { Grid, Box, Paper } from '@mui/material'
 import { deepOrange } from '@mui/material/colors';
 import Card from '@mui/material/Card';
@@ -13,6 +13,9 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import ramen from '../assets/ramen.jpg'
 import { MealType, Cuisine } from '../utilities/Enums';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import Stack from '@mui/material/Stack';
 
 interface FoodBlueprint {
         name: string,
@@ -31,6 +34,9 @@ export default function Menu() {
         const getAllFoodsURL = "http://localhost:3000/admin/restaurants/food/getAll"
 
         const [foods, setFoods] = useState<FoodBlueprint[]>([]);
+        const [order, setOrder] = useState<FoodBlueprint[]>([]);
+        const [totalPrice, setTotalPrice] = useState(0)
+        // const [, forceUpdate] = useReducer(x => x + 1, 0); //for force updating the order side render
 
         React.useEffect(() => {
                 async function fetchFood(URL: string) {
@@ -72,6 +78,28 @@ export default function Menu() {
                         // console.log(error);
                         alert("something went wrong.")
                 }
+        }
+
+        function addItemInOrder(food: FoodBlueprint) {
+                order.push(food)
+                setTotalPrice(totalPrice + food.price)
+                setOrder(order)
+                // forceUpdate();
+        }
+
+        const addItemInOrderWithIndex = (index: number) => {
+                addItemInOrder(order[index])
+                // order.splice(index, 1)
+                // setTotalPrice(totalPrice + order[index].price)
+                // setOrder(order)
+                // forceUpdate()
+        }
+
+        const removeItemInOrderWithIndex = (index: number) => {
+                setTotalPrice(totalPrice - order[index].price)
+                order.splice(index, 1)
+                setOrder(order)
+                // forceUpdate()
         }
 
         return (
@@ -123,8 +151,7 @@ export default function Menu() {
                                                 {
                                                         foods.map((food) => {
                                                                 // console.log(food);
-                                                                return <FoodCard foodName={food.name} description={food.description} price={food.price}
-                                                                        restaurant={food.restaurant} restaurantAddress={food.restaurant_address}></FoodCard>
+                                                                return <FoodCard addItemInOrder={addItemInOrder} food={food}></FoodCard>
                                                         })
                                                 }
                                         </Grid>
@@ -152,7 +179,7 @@ export default function Menu() {
                                                         <Box sx={{
                                                                 height: '90%'
                                                         }}>
-                                                                <OrderCard></OrderCard>
+                                                                <OrderCard order={order} addItemInOrderWithIndex={addItemInOrderWithIndex} removeItemInOrderWithIndex={removeItemInOrderWithIndex} totalPrice={totalPrice}></OrderCard>
                                                         </Box>
                                                 </Box>
                                         </Box>
@@ -164,17 +191,16 @@ export default function Menu() {
 }
 
 export function FoodCard(props: {
-        foodName: string,
-        restaurant: string,
-        restaurantAddress: string,
-        description: string,
-        price: number
+        addItemInOrder(food: FoodBlueprint): void,
+        food: FoodBlueprint
 }) {
-        const foodName = props.foodName
-        const description = props.description
-        const price = props.price
-        const restaurant = props.restaurant
-        const restaurantAddress = props.restaurantAddress
+        const food = props.food
+        const foodName = food.name
+        const description = food.description
+        const price = food.price
+        const restaurant = food.restaurant
+        const restaurantAddress = food.restaurant_address
+        const addItemInOrder = props.addItemInOrder
         return (
                 <>
                         <Grid xs={3} item>
@@ -199,8 +225,8 @@ export function FoodCard(props: {
                                                 </Typography>
                                         </CardContent>
                                         <CardActions>
-                                                <Button sx={{ color: deepOrange[500] }} size="small">Add</Button>
-                                                <Button sx={{ color: deepOrange[500] }} size="small">{price}</Button>
+                                                <Button sx={{ color: deepOrange[500] }} size="small" onClick={() => (addItemInOrder(food))}>Add</Button>
+                                                <Button sx={{ color: deepOrange[500] }} disabled size="small">{price}</Button>
                                         </CardActions>
                                 </Card>
                         </Grid>
@@ -234,7 +260,12 @@ export function SearchBar() {
         );
 }
 
-export function OrderCard() {
+export function OrderCard(props: {
+        order: FoodBlueprint[],
+        addItemInOrderWithIndex(index: number): void
+        removeItemInOrderWithIndex(index: number): void,
+        totalPrice: number
+}) {
         return (
                 <>
                         <Box sx={{
@@ -260,21 +291,16 @@ export function OrderCard() {
                                                 <Divider sx={{ marginTop: 2, width: '92%' }} orientation="horizontal">
                                                 </Divider>
                                                 <Box sx={{
-                                                        marginTop: 2
+                                                        marginTop: 2,
+                                                        height: 'fit-content'
                                                 }}>
-                                                        <ItemRate></ItemRate>
-                                                        <ItemRate></ItemRate>
-                                                        <ItemRate></ItemRate>
-                                                        <ItemRate></ItemRate>
-                                                        <ItemRate></ItemRate>
-                                                        <ItemRate></ItemRate>
-                                                        <ItemRate></ItemRate>
-                                                        <ItemRate></ItemRate>
-                                                        <ItemRate></ItemRate>
-                                                        <ItemRate></ItemRate>
-                                                        <ItemRate></ItemRate>
-
-
+                                                        {
+                                                                props.order.map((food, index) => {
+                                                                        console.log(food)
+                                                                        return <ItemRate food={food} index={index}
+                                                                                addItemInOrderWithIndex={props.addItemInOrderWithIndex} removeItemInOrderWithIndex={props.removeItemInOrderWithIndex}></ItemRate>
+                                                                })
+                                                        }
                                                 </Box>
 
                                         </Box>
@@ -295,7 +321,7 @@ export function OrderCard() {
                                         width: '80%',
                                         p: '7px'
                                 }}>
-                                        <Typography variant='inherit' fontSize={25}>Total: Rs. 5000</Typography>
+                                        <Typography variant='inherit' fontSize={25}>Total: Rs. {props.totalPrice}</Typography>
                                         <Button sx={{
                                                 marginTop: '3px',
                                                 bgcolor: deepOrange[500],
@@ -312,27 +338,48 @@ export function OrderCard() {
         );
 }
 
-export function ItemRate() {
+export function ItemRate(props: {
+        food: FoodBlueprint,
+        index: number,
+        addItemInOrderWithIndex(index: number): void
+        removeItemInOrderWithIndex(index: number): void
+}) {
         return (
                 <>
                         <Grid container spacing={1}>
-                                <Grid item xs={6} sx={{
+                                <Grid item xs={12} sx={{
                                         m: 0,
                                         p: 0,
                                         textAlign: 'start'
                                 }}>
-                                        <Typography variant='body1'>
-                                                Food Type 1:
-                                        </Typography>
-                                </Grid>
-                                <Grid item xs={6} sx={{
-                                        m: 0,
-                                        p: 0,
-                                        textAlign: 'center'
-                                }}>
-                                        <Typography variant='body1'>
-                                                Rs. 500
-                                        </Typography>
+                                        <Stack direction='row' spacing={1}>
+                                                <Box sx={{
+                                                        m: 0, p: 0,
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center'
+                                                }}>
+                                                        <Typography variant='body1'>
+                                                                {props.food.name}
+                                                        </Typography>
+                                                </Box>
+                                                <IconButton aria-label="delete" onClick={() => props.addItemInOrderWithIndex(props.index)}>
+                                                        <AddIcon />
+                                                </IconButton>
+                                                <IconButton aria-label="delete" onClick={() => props.removeItemInOrderWithIndex(props.index)}>
+                                                        <RemoveIcon />
+                                                </IconButton>
+                                                <Box sx={{
+                                                        m: 0, p: 0,
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        justifyContent: 'center'
+                                                }}>
+                                                        <Typography variant='body1'>
+                                                                {props.food.price}
+                                                        </Typography>
+                                                </Box>
+                                        </Stack>
                                 </Grid>
                         </Grid>
                 </>

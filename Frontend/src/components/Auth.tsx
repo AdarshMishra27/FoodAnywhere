@@ -1,16 +1,22 @@
 import React, { useState } from 'react'
-import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
+import Grid from '@mui/material/Grid';
 import { deepOrange } from '@mui/material/colors';
 import { Box, Typography, Button, TextField } from '@mui/material';
 import bgImg from '../assets/bgimage.jpg'
+import { userState } from '../store/atoms/user';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useNavigate } from 'react-router-dom';
 
 export default function Auth(props: { isLoginRender: boolean }) {
         const [username, setUsername] = useState('')
         const [password, setPassword] = useState('')
         const [isLoginRender, setIsLoginRender] = useState(props.isLoginRender)
+        const setUser = useSetRecoilState(userState); //recoil
 
         const URL_LOGIN = "http://localhost:3000/user/auth/login"
         const URL_SIGNUP = "http://localhost:3000/user/auth/signup"
+
+        const navigate = useNavigate()
 
         const handleSubmit = async (URL: string) => {
                 //handle login
@@ -25,9 +31,19 @@ export default function Auth(props: { isLoginRender: boolean }) {
                         const parsedResponse = await response.json()
                         if (parsedResponse.token) {
                                 // console.log(parsedResponse.token);
-                                localStorage.setItem("token", parsedResponse.token)
-                                //TODO -> deepOrangeirect
+                                const userDetails = { token: parsedResponse.token, username: parsedResponse.username }
+                                localStorage.setItem("userDetails", JSON.stringify(userDetails))
+                                setUser({
+                                        isLoading: false,
+                                        userDetails: userDetails.username
+                                })
+
+                                navigate('/menu')
                         } else { //parsing error according to backend
+                                setUser({
+                                        isLoading: false,
+                                        userDetails: null
+                                })
                                 if (parsedResponse.message) {
                                         alert(parsedResponse.message)
                                 } else {
@@ -168,7 +184,7 @@ function LeftPart(props: leftPartPropsType) {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)} />
 
-                        <Grid container alignContent={'center'} sx={{ marginTop: '10px' }}>
+                        <Grid container sx={{ marginTop: '10px', justifyContent: 'center' }}>
                                 <Button variant="contained" sx={{ backgroundColor: deepOrange[50], color: 'black' }}
                                         onClick={handleSubmit}>{buttonText}</Button>
                         </Grid>
@@ -187,7 +203,7 @@ function RightPart(props: { mainHeading: string, subHeading: string, switchParts
 
                                 <Typography color={'white'} style={{ textAlign: 'center', marginTop: '10px' }} >{props.subHeading}</Typography>
 
-                                <Grid container alignContent={'center'} sx={{ marginTop: '10px' }}>
+                                <Grid container sx={{ marginTop: '10px', justifyContent: 'center' }}>
                                         <Button variant="contained" sx={{ backgroundColor: deepOrange[50], color: 'black' }}
                                                 onClick={props.switchParts}>{props.buttonText}</Button>
                                 </Grid>

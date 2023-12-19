@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from 'react'
+import React, { useState } from 'react'
 import { Grid, Box, Paper } from '@mui/material'
 import { deepOrange } from '@mui/material/colors';
 import Card from '@mui/material/Card';
@@ -16,6 +16,7 @@ import { MealType, Cuisine } from '../utilities/Enums';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Stack from '@mui/material/Stack';
+import Navbar from './Navbar';
 
 interface FoodBlueprint {
         name: string,
@@ -36,16 +37,21 @@ export default function Menu() {
         const [foods, setFoods] = useState<FoodBlueprint[]>([]);
         const [order, setOrder] = useState<FoodBlueprint[]>([]);
         const [totalPrice, setTotalPrice] = useState(0)
-        // const [, forceUpdate] = useReducer(x => x + 1, 0); //for force updating the order side render
 
         React.useEffect(() => {
                 async function fetchFood(URL: string) {
                         try {
+                                const userDetails = localStorage.getItem("userDetails");
+                                if (!userDetails) {
+                                        alert("no user found")
+                                        return
+                                }
+                                const token = JSON.parse(userDetails).token
                                 const response = await fetch(URL, {
                                         method: 'GET',
                                         headers: {
                                                 'Content-Type': 'application/json',
-                                                Authorization: `Bearer ${localStorage.getItem("token")}`
+                                                Authorization: `Bearer ${token}`
                                         }
                                 })
                                 // console.log(response)
@@ -63,11 +69,17 @@ export default function Menu() {
         const fetchByFilter = async (filter: MealType | Cuisine, endpoint: string) => {
                 const URL = filterURL + endpoint + "/" + filter
                 try {
+                        const userDetails = localStorage.getItem("userDetails");
+                        if (!userDetails) {
+                                alert("no user found")
+                                return
+                        }
+                        const token = JSON.parse(userDetails).token
                         const response = await fetch(URL, {
                                 method: 'GET',
                                 headers: {
                                         'Content-Type': 'application/json',
-                                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                                        Authorization: `Bearer ${token}`
                                 }
 
                         })
@@ -103,90 +115,93 @@ export default function Menu() {
         }
 
         return (
-                <Grid sx={{
-                        width: '100%',
-                        height: '100vh',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                }}>
-                        <Grid container sx={{
-                                width: '85%',
-                                height: '80%'
-                        }} spacing={2}>
-                                <Grid item xs={9} sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        width: '100%',
-                                        height: '100%'
-                                }}>
-                                        <Box bgcolor={deepOrange[50]} sx={{
-                                                borderRadius: '25px',
-                                                height: '10%',
+                <>
+                        <Navbar buttonName='logout'></Navbar>
+                        <Grid sx={{
+                                width: '100%',
+                                height: '100vh',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                        }}>
+                                <Grid container sx={{
+                                        width: '85%',
+                                        height: '80%'
+                                }} spacing={2}>
+                                        <Grid item xs={9} sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
                                                 width: '100%',
-                                                alignItems: 'center',
-                                                overflowX: 'scroll',
-                                                whiteSpace: 'nowrap',
-                                                padding: '4px'
+                                                height: '100%'
                                         }}>
-                                                <FilterBar filterTypes={mealTypes} fetchByFilter={fetchByFilter} endpoint='mealType'></FilterBar>
-                                                <FilterBar filterTypes={cuisines} fetchByFilter={fetchByFilter} endpoint='cuisine'></FilterBar>
-                                        </Box>
-
-                                        <Box sx={{
-                                                height: '5%',
-                                                width: '100%'
-                                        }}>
-                                                {/* white space */}
-                                        </Box>
-
-                                        <Grid container spacing={3} bgcolor={deepOrange[50]} sx={{
-                                                height: '85%',
-                                                width: '100%',
-                                                margin: '0',
-                                                borderRadius: '25px',
-                                                overflowY: 'scroll'
-                                        }}>
-                                                {
-                                                        foods.map((food) => {
-                                                                // console.log(food);
-                                                                return <FoodCard addItemInOrder={addItemInOrder} food={food}></FoodCard>
-                                                        })
-                                                }
-                                        </Grid>
-                                </Grid>
-                                <Grid item xs={3}>
-                                        <Box bgcolor={deepOrange[50]} sx={{
-                                                height: '100%',
-                                                borderRadius: '25px',
-                                                p: '5px'
-                                        }}>
-                                                <Box sx={{
-                                                        display: 'flex',
-                                                        flexDirection: 'row',
-                                                        justifyContent: 'center',
-                                                        height: '10%'
+                                                <Box bgcolor={deepOrange[50]} sx={{
+                                                        borderRadius: '25px',
+                                                        height: '10%',
+                                                        width: '100%',
+                                                        alignItems: 'center',
+                                                        overflowX: 'scroll',
+                                                        whiteSpace: 'nowrap',
+                                                        padding: '4px'
                                                 }}>
-                                                        <SearchBar></SearchBar>
+                                                        <FilterBar filterTypes={mealTypes} fetchByFilter={fetchByFilter} endpoint='mealType'></FilterBar>
+                                                        <FilterBar filterTypes={cuisines} fetchByFilter={fetchByFilter} endpoint='cuisine'></FilterBar>
                                                 </Box>
+
                                                 <Box sx={{
-                                                        height: '90%',
-                                                        display: 'flex',
-                                                        flexDirection: 'column',
-                                                        justifyContent: 'center'
+                                                        height: '5%',
+                                                        width: '100%'
+                                                }}>
+                                                        {/* white space */}
+                                                </Box>
+
+                                                <Grid container spacing={3} bgcolor={deepOrange[50]} sx={{
+                                                        height: '85%',
+                                                        width: '100%',
+                                                        margin: '0',
+                                                        borderRadius: '25px',
+                                                        overflowY: 'scroll'
+                                                }}>
+                                                        {
+                                                                foods.map((food) => {
+                                                                        // console.log(food);
+                                                                        return <FoodCard addItemInOrder={addItemInOrder} food={food}></FoodCard>
+                                                                })
+                                                        }
+                                                </Grid>
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                                <Box bgcolor={deepOrange[50]} sx={{
+                                                        height: '100%',
+                                                        borderRadius: '25px',
+                                                        p: '5px'
                                                 }}>
                                                         <Box sx={{
-                                                                height: '90%'
+                                                                display: 'flex',
+                                                                flexDirection: 'row',
+                                                                justifyContent: 'center',
+                                                                height: '10%'
                                                         }}>
-                                                                <OrderCard order={order} addItemInOrderWithIndex={addItemInOrderWithIndex} removeItemInOrderWithIndex={removeItemInOrderWithIndex} totalPrice={totalPrice}></OrderCard>
+                                                                <SearchBar></SearchBar>
+                                                        </Box>
+                                                        <Box sx={{
+                                                                height: '90%',
+                                                                display: 'flex',
+                                                                flexDirection: 'column',
+                                                                justifyContent: 'center'
+                                                        }}>
+                                                                <Box sx={{
+                                                                        height: '90%'
+                                                                }}>
+                                                                        <OrderCard order={order} addItemInOrderWithIndex={addItemInOrderWithIndex} removeItemInOrderWithIndex={removeItemInOrderWithIndex} totalPrice={totalPrice}></OrderCard>
+                                                                </Box>
                                                         </Box>
                                                 </Box>
-                                        </Box>
+                                        </Grid>
                                 </Grid>
-                        </Grid>
 
-                </Grid >
+                        </Grid >
+                </>
         )
 }
 

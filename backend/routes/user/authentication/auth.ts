@@ -23,8 +23,8 @@ router.post('/signup', async (req, res) => {
                         password: body.password
                 })
                 newUser.save()
-                const token = jwt.sign({ _id: newUser._id }, SECRET, { expiresIn: '1h' });
-                res.status(200).json({ message: "User Created Successfully", token: token })
+                const token = jwt.sign({ _id: newUser._id }, SECRET, { expiresIn: '5h' });
+                res.status(200).json({ message: "User Created Successfully", token: token, username: body.username })
         } else {
                 res.status(403).json({ message: "User Already Exists" })
         }
@@ -36,8 +36,8 @@ router.post('/login', async (req, res) => {
         const { username, password } = req.body
         const user = await User.findOne({ username, password })
         if (user) {
-                const token = jwt.sign({ _id: user._id }, SECRET, { expiresIn: '1h' });
-                res.status(200).json({ message: "Logged In Successfully", token: token })
+                const token = jwt.sign({ _id: user._id }, SECRET, { expiresIn: '5h' });
+                res.status(200).json({ message: "Logged In Successfully", token: token, username })
         } else {
                 res.status(403).json({ message: 'Invalid username or password' });
         }

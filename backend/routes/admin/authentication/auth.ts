@@ -32,8 +32,8 @@ router.post('/signup', async (req, res) => {
                         password: password
                 })
                 newAdmin.save()
-                const token = jwt.sign({ _id: newAdmin._id }, SECRET, { expiresIn: '1h' });
-                res.status(200).json({ message: "User Created Successfully", token: token })
+                const token = jwt.sign({ _id: newAdmin._id }, SECRET, { expiresIn: '5h' });
+                res.status(200).json({ message: "User Created Successfully", token: token, username })
         } else {
                 res.status(403).json({ message: "User Already Exists" })
         }
@@ -53,8 +53,8 @@ router.post('/login', async (req, res) => {
 
         const admin = await Admin.findOne({ username, password })
         if (admin) {
-                const token = jwt.sign({ _id: admin._id }, SECRET, { expiresIn: '1h' });
-                res.status(200).json({ message: "Logged In Successfully", token: token })
+                const token = jwt.sign({ _id: admin._id }, SECRET, { expiresIn: '5h' });
+                res.status(200).json({ message: "Logged In Successfully", token: token, username })
         } else {
                 res.status(403).json({ message: 'Invalid username or password' });
         }

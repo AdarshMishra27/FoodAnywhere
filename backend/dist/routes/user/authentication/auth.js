@@ -28,8 +28,8 @@ router.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function*
             password: body.password
         });
         newUser.save();
-        const token = jsonwebtoken_1.default.sign({ _id: newUser._id }, config_1.SECRET, { expiresIn: '1h' });
-        res.status(200).json({ message: "User Created Successfully", token: token });
+        const token = jsonwebtoken_1.default.sign({ _id: newUser._id }, config_1.SECRET, { expiresIn: '5h' });
+        res.status(200).json({ message: "User Created Successfully", token: token, username: body.username });
     }
     else {
         res.status(403).json({ message: "User Already Exists" });
@@ -41,8 +41,8 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const { username, password } = req.body;
     const user = yield index_1.User.findOne({ username, password });
     if (user) {
-        const token = jsonwebtoken_1.default.sign({ _id: user._id }, config_1.SECRET, { expiresIn: '1h' });
-        res.status(200).json({ message: "Logged In Successfully", token: token });
+        const token = jsonwebtoken_1.default.sign({ _id: user._id }, config_1.SECRET, { expiresIn: '5h' });
+        res.status(200).json({ message: "Logged In Successfully", token: token, username });
     }
     else {
         res.status(403).json({ message: 'Invalid username or password' });

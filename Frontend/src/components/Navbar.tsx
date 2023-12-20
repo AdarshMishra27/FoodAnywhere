@@ -42,7 +42,10 @@ export default function Navbar(props: {
                                                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                                                         Food - Anywhere
                                                 </Typography>
-                                                <Button color="inherit" onClick={logout}>{props.buttonName}</Button>
+                                                {
+                                                        props.buttonName === 'login' ?
+                                                                <Button color="inherit" disabled>{"login / signup"}</Button> : <Button color="inherit" onClick={logout}>{props.buttonName}</Button>
+                                                }
                                         </Toolbar>
                                 </AppBar>
                         </Box>

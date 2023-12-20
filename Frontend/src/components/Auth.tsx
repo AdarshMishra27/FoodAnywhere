@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid';
 import { deepOrange } from '@mui/material/colors';
 import { Box, Typography, Button, TextField } from '@mui/material';
@@ -13,12 +13,27 @@ export default function Auth(props: { isLoginRender: boolean }) {
         const [isLoginRender, setIsLoginRender] = useState(props.isLoginRender)
         const setUser = useSetRecoilState(userState); //recoil
 
-        const URL_LOGIN = "http://localhost:3000/user/auth/login"
-        const URL_SIGNUP = "http://localhost:3000/user/auth/signup"
+        const AUTH_URL_LOGIN = "http://localhost:3000/clientPath/auth/login" //clientPath must be replaced by admin OR user
+        const AUTH_URL_SIGNUP = "http://localhost:3000/clientPath/auth/signup" //clientPath must be replaced by admin OR user
+        // const URL_LOGIN = "http://localhost:3000/user/auth/login"
+        // const URL_SIGNUP = "http://localhost:3000/user/auth/signup"
 
         const navigate = useNavigate()
 
+        useEffect(() => {
+
+        }, [])
+
         const handleSubmit = async (URL: string) => {
+                const clientPath = localStorage.getItem("client")
+                if (!clientPath) {
+                        alert("select User OR Admin first")
+                        navigate('/')
+                } else {
+                        URL = URL.replace("clientPath", clientPath)
+                        // AUTH_URL_SIGNUP = AUTH_URL_SIGNUP.replace("clientPath", clientPath)
+                }
+
                 //handle login
                 try {
                         const response = await fetch(URL, {
@@ -115,7 +130,7 @@ export default function Auth(props: { isLoginRender: boolean }) {
                                                                 {/*  Left side */}
                                                                 <LeftPart username={username} password={password}
                                                                         setUsername={setUsername} setPassword={setPassword}
-                                                                        handleSubmit={() => handleSubmit(URL_LOGIN)} mainHeading='Login to your Account!'
+                                                                        handleSubmit={() => handleSubmit(AUTH_URL_LOGIN)} mainHeading='Login to your Account!'
                                                                         buttonText='Sign In'></LeftPart>
 
                                                                 {/* right side */}
@@ -135,7 +150,7 @@ export default function Auth(props: { isLoginRender: boolean }) {
                                                                 {/*  Left side */}
                                                                 <LeftPart username={username} password={password}
                                                                         setUsername={setUsername} setPassword={setPassword}
-                                                                        handleSubmit={() => handleSubmit(URL_SIGNUP)} mainHeading='Create your Account!'
+                                                                        handleSubmit={() => handleSubmit(AUTH_URL_SIGNUP)} mainHeading='Create your Account!'
                                                                         buttonText='Sign Up'></LeftPart>
 
                                                                 {/* right side */}

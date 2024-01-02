@@ -26,13 +26,14 @@ router.post('/place', authenticateJwt, async (req, res) => {
                 const foodItem = body.food[i]
                 const food = await Food.findById(foodItem)
                 const price = food?.price
-
+                console.log("ordering: " + food?.name + " {" + food?.price + "}");
                 if (price)
                         totalPrice += price
         }
 
         const username = (await User.findById(userId))?.username
         if (!username) {
+                console.log("userId given is: " + userId);
                 res.status(500).json({ error: "userId in req is invalid" })
                 return
         }

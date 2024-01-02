@@ -39,7 +39,7 @@ const orderSchema = new mongoose.Schema({
                 },
                 food: [{
                         type: mongoose.Schema.Types.ObjectId,
-                        res: "Food"
+                        ref: "Food"
                 }]
         },
         user: {
@@ -93,7 +93,7 @@ const restaurantSchema = new mongoose.Schema({
         food: [foodSchema],
         orders: [{
                 type: mongoose.Schema.Types.ObjectId,
-                res: "Order"
+                ref: "Order"
         }]
 }, { timestamps: true })
 

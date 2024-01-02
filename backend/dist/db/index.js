@@ -42,7 +42,7 @@ const orderSchema = new mongoose_1.default.Schema({
         },
         food: [{
                 type: mongoose_1.default.Schema.Types.ObjectId,
-                res: "Food"
+                ref: "Food"
             }]
     },
     user: {
@@ -95,7 +95,7 @@ const restaurantSchema = new mongoose_1.default.Schema({
     food: [foodSchema],
     orders: [{
             type: mongoose_1.default.Schema.Types.ObjectId,
-            res: "Order"
+            ref: "Order"
         }]
 }, { timestamps: true });
 exports.Admin = mongoose_1.default.model('Admin', adminSchema);

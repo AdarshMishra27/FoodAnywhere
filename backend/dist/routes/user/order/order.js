@@ -25,11 +25,13 @@ router.post('/place', middleware_1.authenticateJwt, (req, res) => __awaiter(void
         const foodItem = body.food[i];
         const food = yield db_1.Food.findById(foodItem);
         const price = food === null || food === void 0 ? void 0 : food.price;
+        console.log("ordering: " + (food === null || food === void 0 ? void 0 : food.name) + " {" + (food === null || food === void 0 ? void 0 : food.price) + "}");
         if (price)
             totalPrice += price;
     }
     const username = (_a = (yield db_1.User.findById(userId))) === null || _a === void 0 ? void 0 : _a.username;
     if (!username) {
+        console.log("userId given is: " + userId);
         res.status(500).json({ error: "userId in req is invalid" });
         return;
     }

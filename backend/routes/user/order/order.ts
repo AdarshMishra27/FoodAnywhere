@@ -61,6 +61,7 @@ router.post('/place', authenticateJwt, async (req, res) => {
                 }
                 await Restaurants.findByIdAndUpdate(body.restaurantId, { orders: [...hotel?.orders, order._id] })
                 res.json(order)
+                console.log("order successful !");
         } catch (error) {
                 console.log(error);
                 res.status(500).json({ error: 'cannot create the order' })

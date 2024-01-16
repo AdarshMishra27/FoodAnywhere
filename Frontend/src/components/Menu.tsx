@@ -21,19 +21,22 @@ import Navbar from './Navbar';
 interface FoodBlueprint {
         name: string,
         description: string,
+        restaurantId: string,
         restaurant: string,
         restaurant_address: string,
         meal_type: "Breakfast" | "Lunch" | "Dinner",
         cuisine: "American" | "Seafood" | "Indian" | "Chinese" | "Italian" | "Mexican" | "Spanish" | "Israeli " | "Japanese",
-        price: number
+        price: number,
+        _id: string
 }
 
 export default function Menu() {
         const mealTypes: MealType[] = Object.values(MealType)
         const cuisines: Array<Cuisine> = Object.values(Cuisine)
-        
+
         const filterURL = "http://localhost:3000/admin/restaurants/food/"
         const getAllFoodsURL = "http://localhost:3000/admin/restaurants/food/getAll"
+        const orderURL = "http://localhost:3000/user/order/place"
 
         const [foods, setFoods] = useState<FoodBlueprint[]>([]);
         const [order, setOrder] = useState<FoodBlueprint[]>([]);
@@ -115,8 +118,52 @@ export default function Menu() {
                 // forceUpdate()
         }
 
-        const orderFunction = function () {
+        const orderFunction = async function (address: string) {
+                if (order.length == 0) {
+                        alert("Make an Order first by selecting food !");
+                        return
+                }
 
+                //TODO - make sure that a user can order from a single restaurant only at a time, currently he can order different foods connected to different restaurants
+                if(!order[0].restaurantId) {
+                        console.log("food not connected to restaurant !");
+                        return
+                }
+                const restaurantId = order[0].restaurantId
+                const foodInTheOrder: string[] = []
+                order.forEach(food => {
+                        foodInTheOrder.push(food._id)
+                });
+                const orderBody = {
+                        restaurantId,
+                        food: foodInTheOrder,
+                        address
+                }
+                try {
+                        const userDetails = localStorage.getItem("userDetails");
+                        if (!userDetails) {
+                                alert("no user found")
+                                return
+                        }
+                        const token = JSON.parse(userDetails).token
+                        const response = await fetch(orderURL, {
+                                method: 'POST',
+                                headers: {
+                                        'Content-Type': 'application/json',
+                                        Authorization: `Bearer ${token}`
+                                },
+                                body: JSON.stringify(orderBody)
+                        })
+                        const parsedResponse = await response.json()
+                        console.log("Order placed for " + JSON.parse(userDetails).username + ", order details -\n" + JSON.stringify(parsedResponse));
+                        if(response.status!==200) {
+                                console.log("something wrong, could not place order !");
+                                return
+                        }
+                } catch (error) {
+                        alert("failed to place the order !")
+                        console.log(error);
+                }
         }
 
         return (
@@ -198,7 +245,8 @@ export default function Menu() {
                                                                 <Box sx={{
                                                                         height: '90%'
                                                                 }}>
-                                                                        <OrderCard order={order} addItemInOrderWithIndex={addItemInOrderWithIndex} removeItemInOrderWithIndex={removeItemInOrderWithIndex} totalPrice={totalPrice}></OrderCard>
+                                                                        <OrderCard order={order} addItemInOrderWithIndex={addItemInOrderWithIndex} removeItemInOrderWithIndex={removeItemInOrderWithIndex} totalPrice={totalPrice}
+                                                                                placeOrder={orderFunction}></OrderCard>
                                                                 </Box>
                                                         </Box>
                                                 </Box>
@@ -284,7 +332,8 @@ export function OrderCard(props: {
         order: FoodBlueprint[],
         addItemInOrderWithIndex(index: number): void
         removeItemInOrderWithIndex(index: number): void,
-        totalPrice: number
+        totalPrice: number,
+        placeOrder(address: string): void
 }) {
         return (
                 <>
@@ -349,7 +398,8 @@ export function OrderCard(props: {
                                                         bgcolor: deepOrange[500],
                                                         border: '1px solid black'
                                                 }
-                                        }} variant='contained' onClick={() => { }}>ORDER</Button>
+                                                // TODO add address in user schema (can make user profile])
+                                        }} variant='contained' onClick={() => { props.placeOrder("No Address for Now !") }}>ORDER</Button>
                                 </Paper >
                         </Box>
 

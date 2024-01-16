@@ -59,6 +59,7 @@ router.post('/place', middleware_1.authenticateJwt, (req, res) => __awaiter(void
         }
         yield db_1.Restaurants.findByIdAndUpdate(body.restaurantId, { orders: [...hotel === null || hotel === void 0 ? void 0 : hotel.orders, order._id] });
         res.json(order);
+        console.log("order successful !");
     }
     catch (error) {
         console.log(error);

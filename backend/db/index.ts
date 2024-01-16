@@ -60,6 +60,11 @@ const foodSchema = new mongoose.Schema({
                 required: true
         },
         description: String,
+        restaurantId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Restaurants",
+                required: true
+        },
         restaurant: {
                 type: String,
                 required: true
@@ -79,8 +84,8 @@ const foodSchema = new mongoose.Schema({
         price: {
                 type: Number,
                 required: true
-        },
-})
+        }
+}, { timestamps: true })
 const restaurantSchema = new mongoose.Schema({
         name: {
                 type: String,

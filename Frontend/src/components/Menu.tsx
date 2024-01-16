@@ -29,8 +29,9 @@ interface FoodBlueprint {
 }
 
 export default function Menu() {
-        const mealTypes: Array<MealType> = Object.values(MealType)
+        const mealTypes: MealType[] = Object.values(MealType)
         const cuisines: Array<Cuisine> = Object.values(Cuisine)
+        
         const filterURL = "http://localhost:3000/admin/restaurants/food/"
         const getAllFoodsURL = "http://localhost:3000/admin/restaurants/food/getAll"
 
@@ -112,6 +113,10 @@ export default function Menu() {
                 order.splice(index, 1)
                 setOrder(order)
                 // forceUpdate()
+        }
+
+        const orderFunction = function () {
+
         }
 
         return (
@@ -344,7 +349,7 @@ export function OrderCard(props: {
                                                         bgcolor: deepOrange[500],
                                                         border: '1px solid black'
                                                 }
-                                        }} variant='contained'>ORDER</Button>
+                                        }} variant='contained' onClick={() => { }}>ORDER</Button>
                                 </Paper >
                         </Box>
 

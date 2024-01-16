@@ -7,8 +7,8 @@ const router = express.Router()
 
 interface OrderType {
         restaurant: {
-                restaurantId: mongoose.Schema.Types.ObjectId,
-                food: [mongoose.Schema.Types.ObjectId]
+                restaurantId: mongoose.Types.ObjectId,
+                food: mongoose.Types.ObjectId[]
         },
         user: {
                 name: string,
@@ -22,9 +22,11 @@ router.post('/place', authenticateJwt, async (req, res) => {
         const userId = req.headers._id
 
         let totalPrice = 0
+        let foodArray = []
         for (let i = 0; i < body.food.length; i++) {
                 const foodItem = body.food[i]
-                const food = await Food.findById(foodItem)
+                foodArray.push(new mongoose.Types.ObjectId(foodItem))
+                const food = await Food.findById(foodArray[foodArray.length - 1])
                 const price = food?.price
                 console.log("ordering: " + food?.name + " {" + food?.price + "}");
                 if (price)
@@ -40,8 +42,8 @@ router.post('/place', authenticateJwt, async (req, res) => {
 
         const orderToBePlaced: OrderType = {
                 restaurant: {
-                        restaurantId: body.restaurantId,
-                        food: body.food
+                        restaurantId: new mongoose.Types.ObjectId(body.restaurantId),
+                        food: foodArray
                 },
                 user: {
                         name: username,

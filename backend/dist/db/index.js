@@ -62,6 +62,11 @@ const foodSchema = new mongoose_1.default.Schema({
         required: true
     },
     description: String,
+    restaurantId: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "Restaurants",
+        required: true
+    },
     restaurant: {
         type: String,
         required: true
@@ -81,8 +86,8 @@ const foodSchema = new mongoose_1.default.Schema({
     price: {
         type: Number,
         required: true
-    },
-});
+    }
+}, { timestamps: true });
 const restaurantSchema = new mongoose_1.default.Schema({
     name: {
         type: String,

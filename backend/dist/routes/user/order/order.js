@@ -15,15 +15,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const middleware_1 = require("../../../middleware");
 const db_1 = require("../../../db");
+const mongoose_1 = __importDefault(require("mongoose"));
 const router = express_1.default.Router();
 router.post('/place', middleware_1.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const body = req.body;
     const userId = req.headers._id;
     let totalPrice = 0;
+    let foodArray = [];
     for (let i = 0; i < body.food.length; i++) {
         const foodItem = body.food[i];
-        const food = yield db_1.Food.findById(foodItem);
+        foodArray.push(new mongoose_1.default.Types.ObjectId(foodItem));
+        const food = yield db_1.Food.findById(foodArray[foodArray.length - 1]);
         const price = food === null || food === void 0 ? void 0 : food.price;
         console.log("ordering: " + (food === null || food === void 0 ? void 0 : food.name) + " {" + (food === null || food === void 0 ? void 0 : food.price) + "}");
         if (price)
@@ -37,8 +40,8 @@ router.post('/place', middleware_1.authenticateJwt, (req, res) => __awaiter(void
     }
     const orderToBePlaced = {
         restaurant: {
-            restaurantId: body.restaurantId,
-            food: body.food
+            restaurantId: new mongoose_1.default.Types.ObjectId(body.restaurantId),
+            food: foodArray
         },
         user: {
             name: username,

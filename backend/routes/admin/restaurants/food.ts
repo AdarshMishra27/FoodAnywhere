@@ -1,12 +1,14 @@
 import express from 'express'
 import { authenticateJwt } from "../../../middleware/index"
 import { Restaurants, Food } from "../../../db"
+import mongoose from 'mongoose'
 
 const router = express.Router()
 
 interface FoodBlueprint {
         name: string,
         description: string,
+        restaurantId: mongoose.Types.ObjectId,
         restaurant: string,
         restaurant_address: string,
         meal_type: "Breakfast" | "Lunch" | "Dinner",

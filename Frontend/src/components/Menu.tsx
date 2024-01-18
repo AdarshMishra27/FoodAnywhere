@@ -125,7 +125,7 @@ export default function Menu() {
                 }
 
                 //TODO - make sure that a user can order from a single restaurant only at a time, currently he can order different foods connected to different restaurants
-                if(!order[0].restaurantId) {
+                if (!order[0].restaurantId) {
                         console.log("food not connected to restaurant !");
                         return
                 }
@@ -156,7 +156,7 @@ export default function Menu() {
                         })
                         const parsedResponse = await response.json()
                         console.log("Order placed for " + JSON.parse(userDetails).username + ", order details -\n" + JSON.stringify(parsedResponse));
-                        if(response.status!==200) {
+                        if (response.status !== 200) {
                                 console.log("something wrong, could not place order !");
                                 return
                         }

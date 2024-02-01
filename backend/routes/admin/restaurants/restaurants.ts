@@ -1,6 +1,7 @@
 import express from "express"
 import { authenticateJwt } from "../../../middleware/index"
 import { Restaurants as Hotel, Admin } from "../../../db"
+import mongoose from "mongoose"
 
 const router = express.Router()
 
@@ -35,6 +36,29 @@ router.get('/get/:id', authenticateJwt, async (req, res) => {
         } catch (error) {
                 console.log(error);
                 res.status(500).json({ error: "Couldn't find the Restaurant" })
+        }
+})
+
+//get resturant id because currently one admin has one restaurant connected to it
+router.get('/getId/', authenticateJwt, async (req, res) => {
+        const _id = req.headers["_id"]
+        if (!_id) return
+        if (Array.isArray(_id)) return
+        const objectId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(_id)
+        console.log(objectId);
+
+        try {
+                let restaurant = await Admin.findOne({ _id: objectId })
+                // let restaurant = await Admin.findById(_id)
+                console.log("finding restaurant id for admin - " + objectId + " typeof" + (typeof objectId));
+                if (!restaurant) {
+                        res.status(500).json({ error: "username wrong, no restaurant can be found associated to the admin" })
+                        return
+                }
+                res.status(200).json({ restaurantId: restaurant._id });
+        } catch (error) {
+                console.log(error);
+                res.status(500).json({ error: "Couldn't find the Restaurant ID" })
         }
 })
 

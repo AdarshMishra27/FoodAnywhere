@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const index_1 = require("../../../middleware/index");
 const db_1 = require("../../../db");
+const mongoose_1 = __importDefault(require("mongoose"));
 const router = express_1.default.Router();
 router.post('/add', index_1.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const inputs = req.body;
@@ -43,6 +44,30 @@ router.get('/get/:id', index_1.authenticateJwt, (req, res) => __awaiter(void 0, 
     catch (error) {
         console.log(error);
         res.status(500).json({ error: "Couldn't find the Restaurant" });
+    }
+}));
+//get resturant id because currently one admin has one restaurant connected to it
+router.get('/getId/', index_1.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const _id = req.headers["_id"];
+    if (!_id)
+        return;
+    if (Array.isArray(_id))
+        return;
+    const objectId = new mongoose_1.default.Types.ObjectId(_id);
+    console.log(objectId);
+    try {
+        let restaurant = yield db_1.Admin.findOne({ _id: objectId });
+        // let restaurant = await Admin.findById(_id)
+        console.log("finding restaurant id for admin - " + objectId + " typeof" + (typeof objectId));
+        if (!restaurant) {
+            res.status(500).json({ error: "username wrong, no restaurant can be found associated to the admin" });
+            return;
+        }
+        res.status(200).json({ restaurantId: restaurant._id });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Couldn't find the Restaurant ID" });
     }
 }));
 router.get('/getAll', index_1.authenticateJwt, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

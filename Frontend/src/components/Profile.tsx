@@ -1,6 +1,6 @@
 import React from 'react'
 import Navbar from './Navbar'
-import { Avatar, Box, Grid, IconButton } from '@mui/material'
+import { Avatar, Box, Button, Divider, Grid, IconButton, List, ListItem, ListItemAvatar, ListItemText, TextField, Typography } from '@mui/material'
 import { deepOrange, grey, orange } from '@mui/material/colors'
 import dp from '../assets/ramen.jpg'
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
@@ -79,8 +79,162 @@ export default function Profile() {
                                                                 bgcolor: grey[300],
                                                                 borderTopLeftRadius: '30px',
                                                                 borderBottomLeftRadius: '30px'
-                                                        }} xs={4}></Grid>
-                                                        <Grid xs={8} sx={{ bgcolor: 'white' }}></Grid>
+                                                        }} xs={4}>
+                                                                <Grid sx={{
+                                                                        p: 3,
+                                                                        // justifyItems: 'center',
+                                                                        display: 'flex',
+                                                                        // alignItems:'center'
+                                                                }} container>
+                                                                        <Grid sx={{ alignItems: 'center' }} container>
+                                                                                <Typography variant="h4" gutterBottom>
+                                                                                        Task List
+                                                                                </Typography>
+                                                                        </Grid>
+                                                                        <Grid container>
+                                                                                <Grid sx={{
+                                                                                        p: 2,
+                                                                                        display: 'flex',
+                                                                                        flexDirection: 'row',
+                                                                                        alignItems: 'center',
+                                                                                        justifyContent: 'center'
+                                                                                }} container spacing={1}>
+                                                                                        <Grid xs={4} sx={{
+                                                                                                alignItems: 'center',
+                                                                                                justifyContent: 'center',
+                                                                                                ":hover": {
+                                                                                                        borderRadius: '15px',
+                                                                                                        bgcolor: deepOrange[500],
+                                                                                                }
+                                                                                        }} container>
+                                                                                                <Typography variant='h6' gutterBottom>New</Typography>
+                                                                                        </Grid>
+                                                                                        <Grid xs={4} sx={{
+                                                                                                alignItems: 'center',
+                                                                                                justifyContent: 'center',
+                                                                                                ":hover": {
+                                                                                                        borderRadius: '15px',
+                                                                                                        bgcolor: deepOrange[500],
+                                                                                                }
+                                                                                        }} container>
+                                                                                                <Typography variant='h6' gutterBottom>Preparing</Typography>
+                                                                                        </Grid>
+                                                                                        <Grid xs={4} sx={{
+                                                                                                alignItems: 'center',
+                                                                                                justifyContent: 'center',
+                                                                                                ":hover": {
+                                                                                                        borderRadius: '15px',
+                                                                                                        bgcolor: deepOrange[500],
+                                                                                                }
+                                                                                        }} container>
+                                                                                                <Typography variant='h6' gutterBottom>Delivery</Typography>
+                                                                                        </Grid>
+                                                                                </Grid>
+                                                                        </Grid>
+                                                                        <Grid container>
+                                                                                <List sx={{ width: '100%', bgcolor: 'background.paper', borderRadius: '15px' }} >
+                                                                                        <ListItem>
+                                                                                                <ListItemAvatar>
+                                                                                                </ListItemAvatar>
+                                                                                                <ListItemText primary="Photos" secondary="Jan 9, 2014" />
+                                                                                        </ListItem>
+                                                                                        <Divider></Divider>
+                                                                                        <ListItem>
+                                                                                                <ListItemAvatar>
+                                                                                                </ListItemAvatar>
+                                                                                                <ListItemText primary="Work" secondary="Jan 7, 2014" />
+                                                                                        </ListItem>
+                                                                                        <Divider></Divider>
+                                                                                        <ListItem>
+                                                                                                <ListItemAvatar>
+                                                                                                </ListItemAvatar>
+                                                                                                <ListItemText primary="Vacation" secondary="July 20, 2014" />
+                                                                                        </ListItem>
+                                                                                        {/* <Divider></Divider> */}
+                                                                                </List>
+                                                                        </Grid>
+                                                                </Grid>x
+                                                        </Grid>
+                                                        <Grid xs={8} sx={{
+                                                                p: 4,
+                                                                bgcolor: 'white',
+                                                                alignContent: 'center',
+                                                                justifyContent: 'center'
+                                                        }} container>
+                                                                <Grid sx={{
+                                                                        p: 2,
+                                                                        width: '100%',
+                                                                        height: '100%',
+                                                                        border: '3px solid',
+                                                                        borderColor: grey[300]
+                                                                }} >
+                                                                        <Grid sx={{ p: 2 }}>
+                                                                                <Typography variant="h4" gutterBottom>
+                                                                                        XYZ Restaurant
+                                                                                </Typography>
+                                                                        </Grid>
+                                                                        <Grid sx={{ p: 2 }}>
+                                                                                <TextField
+                                                                                        id="outlined-read-only-input"
+                                                                                        label="Food Name"
+                                                                                        defaultValue="Food Name"
+                                                                                        InputProps={{
+
+                                                                                        }}
+                                                                                />
+                                                                        </Grid>
+                                                                        <Grid sx={{ p: 2 }}>
+                                                                                <TextField
+                                                                                        id="outlined-read-only-input"
+                                                                                        label="Description"
+                                                                                        defaultValue="Description"
+                                                                                        InputProps={{
+
+                                                                                        }}
+                                                                                />
+                                                                        </Grid>
+                                                                        <Grid sx={{ p: 2 }}>
+                                                                                <TextField
+                                                                                        id="outlined-read-only-input"
+                                                                                        label="Meal Type"
+                                                                                        defaultValue="Meal Type"
+                                                                                        InputProps={{
+
+                                                                                        }}
+                                                                                />
+                                                                        </Grid>
+                                                                        <Grid sx={{ p: 2 }}>
+                                                                                <TextField
+                                                                                        id="outlined-read-only-input"
+                                                                                        label="Cuisine"
+                                                                                        defaultValue="Cuisine"
+                                                                                        InputProps={{
+
+                                                                                        }}
+                                                                                />
+                                                                        </Grid>
+                                                                        <Grid sx={{ p: 2 }}>
+                                                                                <TextField
+                                                                                        id="outlined-read-only-input"
+                                                                                        label="Price"
+                                                                                        defaultValue="Price"
+                                                                                        InputProps={{
+
+                                                                                        }}
+                                                                                />
+                                                                        </Grid>
+                                                                        <Grid sx={{ p: 2 }}>
+                                                                                <Button sx={{
+                                                                                        // marginTop: '3px',
+                                                                                        bgcolor: deepOrange[500],
+                                                                                        ":hover": {
+                                                                                                bgcolor: deepOrange[500],
+                                                                                                border: '1px solid black'
+                                                                                        }
+                                                                                }} variant='contained' onClick={() => { }}>Update</Button>
+                                                                        </Grid>
+                                                                </Grid>
+                                                        </Grid>
                                                 </Grid>
                                         </Grid>
                                 </Grid>
